@@ -3,11 +3,11 @@ const app = express(); // Qualquer coisa que eu for usar agora do express, eu vo
 
 // Definição de rotas
 app.get('/', function(req, res){
-    res.send("Bem vindos! Nodemon funcionando belezura!");
+    res.sendFile(__dirname + "/html/index.html");
 });
 
 app.get("/sobre", function(req, res){
-    res.send("Atuando na rota sobre!");
+    res.sendFile(__dirname + "/html/sobre.html");
 });
 
 app.get("/blog", function(req, res){
