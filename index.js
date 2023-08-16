@@ -6,21 +6,27 @@ const Post = require('./models/Post');
 
 // Config
     // Template Engine
-        app.engine('handlebars', handlebars.engine({ defaultLayout: 'main' }));
+        app.engine('handlebars', handlebars.engine({ 
+                                            defaultLayout: 'main',
+                                            runtimeOptions:{
+                                                allowProtoPropertiesByDefault:true,
+                                                allowProtoMethodsByDefault:true
+                                            }
+                                        }));
         app.set('view engine', 'handlebars');
     // Body Parser
         app.use(bodyParser.urlencoded({ extended: false }));
         app.use(bodyParser.json());
 // Rotas
     app.get('/', function(req, res){
-        // Render -> renderiza arquivos dentro da pasta "views"
-            res.render('home'); 
+        Post.findAll({order:[['id', 'DESC']]}).then(function(posts){
+            // Render -> renderiza arquivos dentro da pasta "views"
+                res.render('home', {posts:posts});
+        })
     });
 
     app.get('/cad', function(req, res){
-        // Nome do arquivo que quer exibir
-        // Renderiza o formulário
-            res.render('form'); 
+        res.render('form');
     });
 
     app.post('/add', function(req, res){
@@ -33,6 +39,15 @@ const Post = require('./models/Post');
         }).catch(function(error){
             res.send("Erro na criação do post: " + error);
         })
+    });
+
+    app.get('/deletar/:id', function(req, res){
+        Post.destroy({where:{'id': req.params.id}})
+            .then(function(){
+                res.send('Postagem deletada com sucesso!')
+            }).catch(function(error){
+                res.send('Essa postagem não')
+            });
     });
 
 app.listen(8080, function () {
